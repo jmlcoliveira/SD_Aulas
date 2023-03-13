@@ -7,6 +7,10 @@ import java.net.InetSocketAddress;
 import java.net.MulticastSocket;
 import java.net.NetworkInterface;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 /**
@@ -53,12 +57,13 @@ class DiscoveryImpl implements Discovery {
 	static final int DISCOVERY_RETRY_TIMEOUT = 5000;
 	static final int DISCOVERY_ANNOUNCE_PERIOD = 1000;
 
+	Map<String, URI> knowURIs = new HashMap<>();
+
 	// Replace with appropriate values...
-	static final InetSocketAddress DISCOVERY_ADDR = new InetSocketAddress("XXX.XXX.XXX.XXX", -1);
+	static final InetSocketAddress DISCOVERY_ADDR = new InetSocketAddress("255.10.10.10", 9000);
 
 	// Used separate the two fields that make up a service announcement.
 	private static final String DELIMITER = "\t";
-
 	private static final int MAX_DATAGRAM_SIZE = 65536;
 
 	private static Discovery singleton;
@@ -102,7 +107,7 @@ class DiscoveryImpl implements Discovery {
 
 	@Override
 	public URI[] knownUrisOf(String serviceName, int minEntries) {
-		return null;
+		return new URI[]{knowURIs.get(serviceName)};
 	}
 
 	private void startListener() {
@@ -122,9 +127,11 @@ class DiscoveryImpl implements Discovery {
 
 						var parts = msg.split(DELIMITER);
 						if (parts.length == 2) {
-							// TODO: complete by storing the decoded announcements...
+
 							var serviceName = parts[0];
 							var uri = URI.create(parts[1]);
+
+							knowURIs.put(serviceName, uri);
 						}
 
 					} catch (Exception x) {
