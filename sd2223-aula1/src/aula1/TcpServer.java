@@ -19,7 +19,7 @@ public class TcpServer {
         
 		try(var ss = new ServerSocket( PORT )) {
 			System.err.println("Accepting connections at: " + ss.getLocalSocketAddress() ) ;
-            disco.announce(ss.getInetAddress().getHostName(), "tcp://"+ss.getInetAddress().getHostName()+":"+PORT);
+            disco.announce(args[0], "tcp://"+args[0]+":"+PORT);
             while( true ) {
                 var cs = ss.accept() ;
                 

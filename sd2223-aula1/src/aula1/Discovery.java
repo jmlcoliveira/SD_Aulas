@@ -60,7 +60,7 @@ class DiscoveryImpl implements Discovery {
 	Map<String, URI> knowURIs = new HashMap<>();
 
 	// Replace with appropriate values...
-	static final InetSocketAddress DISCOVERY_ADDR = new InetSocketAddress("255.10.10.10", 9000);
+	static final InetSocketAddress DISCOVERY_ADDR = new InetSocketAddress("254.10.10.10", 9000);
 
 	// Used separate the two fields that make up a service announcement.
 	private static final String DELIMITER = "\t";

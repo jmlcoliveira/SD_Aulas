@@ -1,8 +1,6 @@
 package aula2.server.resources;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Logger;
 
 import aula2.api.User;
@@ -44,52 +42,68 @@ public class UsersResource implements RestUsers {
 	@Override
 	public User getUser(String userId, String password) {
 		Log.info("getUser : user = " + userId + "; pwd = " + password);
-		
+
+		return validateUser(userId, password);
+	}
+
+	@Override
+	public User updateUser(String userId, String password, User new_user) {
+		Log.info("updateUser : user = " + userId + "; pwd = " + password + " ; user = " + new_user);
+
+		var user = validateUser(userId, password);
+
+		users.replace(userId, new_user);
+
+		return new_user;
+	}
+
+	private User validateUser(String userId, String password){
 		// Check if user is valid
 		if(userId == null || password == null) {
 			Log.info("UserId or password null.");
 			throw new WebApplicationException( Status.BAD_REQUEST );
 		}
-		
+
 		var user = users.get(userId);
-		
-		// Check if user exists 
+
+		// Check if user exists
 		if( user == null ) {
 			Log.info("User does not exist.");
 			throw new WebApplicationException( Status.NOT_FOUND );
 		}
-		
+
 		//Check if the password is correct
 		if( !user.getPassword().equals( password)) {
 			Log.info("Password is incorrect.");
 			throw new WebApplicationException( Status.FORBIDDEN );
 		}
-		
+
 		return user;
-	}
-
-
-	@Override
-	public User updateUser(String userId, String password, User user) {
-		Log.info("updateUser : user = " + userId + "; pwd = " + password + " ; user = " + user);
-		// TODO Complete method
-		throw new WebApplicationException( Status.NOT_IMPLEMENTED );
 	}
 
 
 	@Override
 	public User deleteUser(String userId, String password) {
 		Log.info("deleteUser : user = " + userId + "; pwd = " + password);
-		// TODO Complete method
-		throw new WebApplicationException( Status.NOT_IMPLEMENTED );
+
+		var user = validateUser(userId, password);
+
+		return users.remove(userId);
 	}
 
 
 	@Override
 	public List<User> searchUsers(String pattern) {
 		Log.info("searchUsers : pattern = " + pattern);
-		// TODO Complete method
-		throw new WebApplicationException( Status.NOT_IMPLEMENTED );
+
+		if(pattern == null) return new LinkedList<>(users.values());
+
+		List<User> l = new LinkedList<>();
+		for(User u : users.values()) {
+			if (u.getFullName().contains(pattern))
+				l.add(u);
+		}
+		return l;
 	}
 
 }

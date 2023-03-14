@@ -46,7 +46,5 @@ public class CreateUserClient {
 			System.out.println("Success, created user with id: " + r.readEntity(String.class) );
 		else
 			System.out.println("Error, HTTP error status: " + r.getStatus() );
-
 	}
-	
 }
