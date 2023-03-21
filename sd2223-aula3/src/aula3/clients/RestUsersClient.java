@@ -7,6 +7,7 @@ import aula3.api.User;
 import aula3.api.rest.UsersService;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.client.WebTarget;
+import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.Status;
@@ -48,6 +49,44 @@ public class RestUsersClient extends RestClient implements UsersService {
 		
 		return null;
 	}
+
+	private User clt_updateUser(String name, String pwd, User user){
+		Response r = target.path( name )
+				.queryParam(UsersService.PWD, pwd).request()
+				.accept(MediaType.APPLICATION_JSON)
+				.put(Entity.entity(user, MediaType.APPLICATION_JSON));
+
+		if( r.getStatus() == Response.Status.OK.getStatusCode() && r.hasEntity() ) {
+			return r.readEntity(User.class);
+		} else
+			System.out.println("Error, HTTP error status: " + r.getStatus() );
+		return null;
+	}
+
+	private User clt_deleteUser(String name, String pwd){
+		Response r = target.path( name )
+				.queryParam(UsersService.PWD, pwd).request()
+				.accept(MediaType.APPLICATION_JSON)
+				.delete();
+
+		if( r.getStatus() == Response.Status.OK.getStatusCode() && r.hasEntity() ) {
+			return r.readEntity(User.class);
+		} else
+			System.out.println("Error, HTTP error status: " + r.getStatus() );
+		return null;
+	}
+
+	private List<User> clt_searchUsers(String pattern){
+		Response r = target.path("/").queryParam( UsersService.QUERY, pattern).request()
+				.accept(MediaType.APPLICATION_JSON)
+				.get();
+
+		if( r.getStatus() == Status.OK.getStatusCode() && r.hasEntity() ) {
+			return r.readEntity(new GenericType<List<User>>() {});
+		} else
+			System.out.println("Error, HTTP error status: " + r.getStatus() );
+		return null;
+	}
 	
 	@Override
 	public String createUser(User user) {
@@ -61,19 +100,16 @@ public class RestUsersClient extends RestClient implements UsersService {
 
 	@Override
 	public User updateUser(String name, String pwd, User user) {
-		// TODO Auto-generated method stub
-		return null;
+		return super.reTry(() -> clt_updateUser(name, pwd, user));
 	}
 
 	@Override
 	public User deleteUser(String name, String pwd) {
-		// TODO Auto-generated method stub
-		return null;
+		return super.reTry(() -> clt_deleteUser(name, pwd));
 	}
 
 	@Override
 	public List<User> searchUsers(String pattern) {
-		// TODO Auto-generated method stub
-		return null;
+		return super.reTry(() -> clt_searchUsers(pattern));
 	}
 }

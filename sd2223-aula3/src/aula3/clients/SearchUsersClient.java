@@ -1,5 +1,7 @@
 package aula3.clients;
 
+import aula3.api.User;
+
 import java.io.IOException;
 import java.net.URI;
 
@@ -23,8 +25,9 @@ public class SearchUsersClient {
 
 		System.out.println("Sending request to server.");
 
-		new RestUsersClient(URI.create(serverUrl)).searchUsers(userId);
-
+		var res = new RestUsersClient(URI.create(serverUrl)).searchUsers(userId);
+		for(User u:res)
+			System.out.println("Result: " + u);
 	}
 
 }
