@@ -1,0 +1,12 @@
+/home/jmlcoliveira/Documents/SD_Aulas/sd2223-aula3/src/aula3/clients/RestUsersClient.java
+/home/jmlcoliveira/Documents/SD_Aulas/sd2223-aula3/src/aula3/server/resources/UsersResource.java
+/home/jmlcoliveira/Documents/SD_Aulas/sd2223-aula3/src/aula3/clients/CreateUserClient.java
+/home/jmlcoliveira/Documents/SD_Aulas/sd2223-aula3/src/aula3/server/util/CustomLoggingFilter.java
+/home/jmlcoliveira/Documents/SD_Aulas/sd2223-aula3/src/aula3/clients/RestClient.java
+/home/jmlcoliveira/Documents/SD_Aulas/sd2223-aula3/src/aula3/clients/SearchUsersClient.java
+/home/jmlcoliveira/Documents/SD_Aulas/sd2223-aula3/src/aula3/clients/GetUserClient.java
+/home/jmlcoliveira/Documents/SD_Aulas/sd2223-aula3/src/aula3/api/User.java
+/home/jmlcoliveira/Documents/SD_Aulas/sd2223-aula3/src/aula3/api/rest/UsersService.java
+/home/jmlcoliveira/Documents/SD_Aulas/sd2223-aula3/src/aula3/server/UsersServer.java
+/home/jmlcoliveira/Documents/SD_Aulas/sd2223-aula3/src/aula3/clients/UpdateUserClient.java
+/home/jmlcoliveira/Documents/SD_Aulas/sd2223-aula3/src/aula3/clients/DeleteUserClient.java

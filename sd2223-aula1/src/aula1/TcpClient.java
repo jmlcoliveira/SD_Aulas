@@ -11,16 +11,16 @@ public class TcpClient {
     
 	private static final String QUIT = "!quit";
 
-	private final Discovery discovery = Discovery.getInstance();
-
 	public static void main(String[] args) throws Exception {
         
     	// Use Discovery to obtain the hostname and port of the server;
-    	var port = 9000;
-    	var hostname = "0.0.0.0";
-    	
+		URI[] uri = null;
+		while ((uri = Discovery.getInstance().knownUrisOf("224.0.0.0", 0)) == null);
 
-    	try( var cs = new Socket( hostname, port); var sc = new Scanner(System.in)) {
+		var port = uri[0].getPort();
+    	var hostname = uri[0].getHost();
+		System.out.println("going to connect to:" +hostname+ "/" + port);
+    	try( var cs = new Socket(hostname, port); var sc = new Scanner(System.in)) {
     		String input;
     		do {
     			input = sc.nextLine();

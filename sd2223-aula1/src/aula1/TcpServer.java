@@ -11,18 +11,16 @@ public class TcpServer {
     private static final int PORT = 9000;
 	private static final int BUF_SIZE = 1024;
 
-    private static final Discovery disco = Discovery.getInstance();
-
 	public static void main(String[] args) throws Exception {
         
 		// Use Discovery to announce the uri of this server, in the form of (tcp://hostname:port)
-        
+        Discovery.getInstance().announce("224.0.0.0",  "tcp://"+ InetAddress.getLocalHost().getHostName() + ":" + PORT);
+        System.err.println("----------------------------------------------------");
+
 		try(var ss = new ServerSocket( PORT )) {
 			System.err.println("Accepting connections at: " + ss.getLocalSocketAddress() ) ;
-            disco.announce(args[0], "tcp://"+args[0]+":"+PORT);
             while( true ) {
                 var cs = ss.accept() ;
-                
                 System.err.println("Accepted connection from client at: " + cs.getRemoteSocketAddress() ) ;
                 
                 int n;

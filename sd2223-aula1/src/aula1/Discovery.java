@@ -7,9 +7,7 @@ import java.net.InetSocketAddress;
 import java.net.MulticastSocket;
 import java.net.NetworkInterface;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -26,7 +24,7 @@ public interface Discovery {
 	 * @param serviceName - the name of the service
 	 * @param serviceURI - the uri of the service
 	 */
-	void announce(String serviceName, String serviceURI);
+	public void announce(String serviceName, String serviceURI);
 
 	/**
 	 * Get discovered URIs for a given service name
@@ -34,13 +32,13 @@ public interface Discovery {
 	 * @param minReplies - minimum number of requested URIs. Blocks until the number is satisfied.
 	 * @return array with the discovered URIs for the given service name.
 	 */
-	URI[] knownUrisOf(String serviceName, int minReplies);
+	public URI[] knownUrisOf(String serviceName, int minReplies);
 
 	/**
 	 * Get the instance of the Discovery service
 	 * @return the singleton instance of the Discovery service
 	 */
-	static Discovery getInstance() {
+	public static Discovery getInstance() {
 		return DiscoveryImpl.getInstance();
 	}
 }
@@ -57,16 +55,17 @@ class DiscoveryImpl implements Discovery {
 	static final int DISCOVERY_RETRY_TIMEOUT = 5000;
 	static final int DISCOVERY_ANNOUNCE_PERIOD = 1000;
 
-	Map<String, URI> knowURIs = new HashMap<>();
-
 	// Replace with appropriate values...
-	static final InetSocketAddress DISCOVERY_ADDR = new InetSocketAddress("254.10.10.10", 9000);
+	static final InetSocketAddress DISCOVERY_ADDR = new InetSocketAddress("224.0.0.0", 9000);
 
 	// Used separate the two fields that make up a service announcement.
 	private static final String DELIMITER = "\t";
+
 	private static final int MAX_DATAGRAM_SIZE = 65536;
 
 	private static Discovery singleton;
+
+	private Map<String, URI[]> URIsKnown;
 
 	synchronized static Discovery getInstance() {
 		if (singleton == null) {
@@ -107,13 +106,14 @@ class DiscoveryImpl implements Discovery {
 
 	@Override
 	public URI[] knownUrisOf(String serviceName, int minEntries) {
-		return new URI[]{knowURIs.get(serviceName)};
+		URI[] uri = URIsKnown.get(serviceName);
+		return uri;
 	}
 
 	private void startListener() {
 		Log.info(String.format("Starting discovery on multicast group: %s, port: %d\n", DISCOVERY_ADDR.getAddress(),
 				DISCOVERY_ADDR.getPort()));
-
+		if(URIsKnown == null) URIsKnown = new HashMap<>();
 		new Thread(() -> {
 			try (var ms = new MulticastSocket(DISCOVERY_ADDR.getPort())) {
 				ms.joinGroup(DISCOVERY_ADDR, NetworkInterface.getByInetAddress(InetAddress.getLocalHost()));
@@ -126,12 +126,14 @@ class DiscoveryImpl implements Discovery {
 						Log.info(String.format("Received: %s", msg));
 
 						var parts = msg.split(DELIMITER);
-						if (parts.length == 2) {
 
+
+						if (parts.length == 2) {
+							// TODO: complete by storing the decoded announcements...
 							var serviceName = parts[0];
 							var uri = URI.create(parts[1]);
-
-							knowURIs.put(serviceName, uri);
+							URI[] uris = {uri};
+							URIsKnown.put(serviceName, uris);
 						}
 
 					} catch (Exception x) {
