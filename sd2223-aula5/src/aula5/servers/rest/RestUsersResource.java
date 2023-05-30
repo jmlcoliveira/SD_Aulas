@@ -45,6 +45,4 @@ public class RestUsersResource extends RestResource implements UsersService {
 	public List<User> searchUsers(String pattern) {
 		throw new RuntimeException("Not Implemented...");
 	}
-
-		
 }
